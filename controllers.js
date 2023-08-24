@@ -1,55 +1,31 @@
 const contacts = require("./models/contacts");
-const addSchema = require("./schema")
+const ctrlWrapper = require('./ctrlWrapper');
 
 const listContacts = async (req, res, next) => {
-    try {
-        const result = await contacts.listContacts()
-        res.json(result)
-    }
-    catch (error) {
-        next(error)
-    }
+    const result = await contacts.listContacts()
+    res.json(result)
 }
 
-const getContactById =  async (req, res, next) => {
-    try {
-        const { contactId } = req.params;
-        const result = await contacts.getContactById(contactId);
-        if (!result) {
-            const error = new Error("Not found");
-            error.status = 404;
-            throw error;
-        }
-        res.json(result)
+const getContactById = async (req, res, next) => {
+    const { id } = req.params;
+    const result = await contacts.getContactById(id);
+    if (!result) {
+        const error = new Error("Not found");
+        error.status = 404;
+        throw error;
     }
-    catch (error) {
-        next(error);
-    }
+    res.json(result)
 }
 
 const addContact = async (req, res, next) => {
-    try {
-        const { error } = addSchema.validate(req.body);
-        const field = error.message.split(" ");
-        if (error) {
-            const error = new Error(`missing required ${field[0].slice(1, -1)} field`);
-            error.status = 400;
-            throw error;
-        }
-        console.log(req.body)
-        const result = await contacts.addContact(req.body)
-        res.status(201).json(result)
-    }
-    catch (error) {
-        next(error);
-    }
+    const result = await contacts.addContact(req.body);
+    console.log(req.body)
+    res.status(201).json(result)
 }
 
 const removeContact = async (req, res, next) => {
-    try {
-        const { contactId } = req.params;
-        const result = await contacts.removeContact(contactId);
-        console.log(result)
+        const { id } = req.params;
+        const result = await contacts.removeContact(id);
         if (!result) {
             const error = new Error("Not found");
             error.status = 404;
@@ -58,44 +34,23 @@ const removeContact = async (req, res, next) => {
         res.json({
             message: "contact deleted"
         })
-    }
-    catch (error) {
-        next(error);
-    }
 }
 
 const updateContact = async (req, res, next) => {
-    try {
-        const { error } = addSchema.validate(req.body);
-        const field = error.message.split(" ");
-        if (JSON.stringify(error._original) === '{}') {
-            const error = new Error("missing fields");
-            error.status = 400;
-            throw error;
-        }
-        if (error) {
-            const error = new Error(`missing required ${field[0].slice(1, -1)} field`);
-            error.status = 400;
-            throw error;
-        }
-        const { contactId } = req.params;
-        const result = await contacts.updateContact(contactId, req.body);
+    const { id } = req.params;
+        const result = await contacts.updateContact(id, req.body);
         if (!result) {
             const error = new Error("Not found");
             error.status = 404;
             throw error;
         }
         res.json(result)
-    }
-    catch (error) {
-        next(error);
-    }
 }
 
 module.exports = {
-    listContacts,
-    getContactById,
-    updateContact,
-    removeContact,
-    addContact
+    listContacts: ctrlWrapper(listContacts),
+    getContactById: ctrlWrapper(getContactById),
+    addContact: ctrlWrapper(addContact),
+    updateContact: ctrlWrapper(updateContact),
+    removeContact: ctrlWrapper(removeContact),
 }
