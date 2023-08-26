@@ -7,8 +7,8 @@ const router = express.Router()
 
 router.get('/', ctrl.listContacts);
 router.get('/:id', ctrl.getContactById);
-router.post('/', isValidId, validateData(addSchema), ctrl.addContact);
-router.delete('/:id', ctrl.removeContact);
+router.post('/', validateData(addSchema), ctrl.addContact);
+router.delete('/:id', isValidId, ctrl.removeContact);
 router.put('/:id', isValidId, validateData(addSchema), ctrl.updateContact);
 router.patch('/:id/favorite', isValidId, validateData(updateFavoriteSchema), ctrl.updateStatusContact);
 
