@@ -6,7 +6,7 @@ const { updateFavoriteSchema, addSchema } = require('../../models/contacts');
 const router = express.Router()
 
 router.get('/', ctrl.listContacts);
-router.get('/:id', ctrl.getContactById);
+router.get('/:id', isValidId, ctrl.getContactById);
 router.post('/', validateData(addSchema), ctrl.addContact);
 router.delete('/:id', isValidId, ctrl.removeContact);
 router.put('/:id', isValidId, validateData(addSchema), ctrl.updateContact);
