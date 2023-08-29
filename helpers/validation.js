@@ -1,23 +1,18 @@
 const { isValidObjectId } = require("mongoose");
+const HttpError = require("./httpError");
 
 const validateData = schema => {
     const func = (req, res, next) => {
         const { error: validationErr, value } = schema.validate(req.body);
         console.log(validationErr)
         if (validationErr && validationErr.details[0].context.label === 'favorite') {
-            const error = new Error(validationErr.message);
-            error.status = 400;
-            throw error;
+            next(HttpError(400, validationErr.message));
         }
         if (JSON.stringify(value) === '{}') {
-            const error = new Error("missing fields");
-            error.status = 400;
-            throw error;
+            next(HttpError(400, "missing fields"));
         }
         if (JSON.stringify(value) !== '{}' && validationErr) {
-            const error = new Error(validationErr.message);
-            error.status = 400;
-            throw error;
+            next(HttpError(400, validationErr.message));
         }
         next()
     }
@@ -28,9 +23,7 @@ const validateData = schema => {
 const isValidId = (req, res, next) => {
     const { id } = req.params;
     if (!isValidObjectId(id)) {
-        const error = new Error(`${id} is not valid id`);
-        error.status = 400;
-        throw error;
+        next(HttpError(400, `${id} is not valid id`));
     }
     next();
 }
