@@ -10,6 +10,6 @@ router.post("/register", validateData(registerSchema), ctrl.register);
 router.post("/login", validateData(registerSchema), ctrl.login);
 router.get("/current", authenticate, ctrl.getCurrent);
 router.post("/logout", authenticate, ctrl.logout);
-router.patch("/users", authenticate, validateData(updateSubscriptionSchema), ctrl.updateSubscription)
+router.patch("/", authenticate, validateData(updateSubscriptionSchema), ctrl.updateSubscription)
 
 module.exports = router

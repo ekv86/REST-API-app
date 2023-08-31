@@ -27,8 +27,12 @@ const userSchema = new Schema({
 userSchema.post("save", mongooseError);
 
 const registerSchema = Joi.object({
-    email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().required(),
+    email: Joi.string().pattern(emailRegexp).required().messages({
+        "any.required": "missing required email field",
+    }),
+    password: Joi.string().required().messages({
+        "any.required": "missing required password field",
+    }),
 })
 
 const updateSubscriptionSchema = Joi.object({

@@ -16,8 +16,10 @@ const register = async (req, res) => {
     const hashPassword = bcrypt.hashSync(password, 10)
     const newUser = await User.create({ ...req.body, password: hashPassword });
     res.status(201).json({
-        email: newUser.email,
-        subscription: newUser.subscription,
+        user: {
+            email: newUser.email,
+            subscription: newUser.subscription,
+        }
     })
 }
 
@@ -39,11 +41,13 @@ const login = async (req, res) => {
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
     await User.findByIdAndUpdate(user._id, { token });
     
-    res.status(201).json({
+    res.status(200).json({
         token,
-        email: user.email,
-        subscription: user.subscription,
-    })
+        user: {
+            email: user.email,
+            subscription: user.subscription,
+        }
+})
 }
 
 const getCurrent = async (req, res) => {
