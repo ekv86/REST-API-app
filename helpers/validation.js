@@ -1,11 +1,15 @@
 const { isValidObjectId } = require("mongoose");
 const HttpError = require("./httpError");
+const { emailSchema } = require("../models/user");
 
 const validateData = schema => {
     const func = (req, res, next) => {
         const { error: validationErr, value } = schema.validate(req.body);
         console.log(validationErr)
         if (validationErr && validationErr.details[0].context.label === 'favorite') {
+            next(HttpError(400, validationErr.message));
+        }
+        if (JSON.stringify(value) === '{}' && schema === emailSchema) {
             next(HttpError(400, validationErr.message));
         }
         if (JSON.stringify(value) === '{}') {

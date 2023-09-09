@@ -1,13 +1,15 @@
 const express = require('express')
 const ctrl = require("../../controllers/auth")
 const { validateData } = require("../../helpers/validation");
-const { registerSchema, updateSubscriptionSchema } = require('../../models/user');
+const { registerSchema, updateSubscriptionSchema, emailSchema } = require('../../models/user');
 const authenticate = require('../../helpers/authenticate');
 const upload = require('../../helpers/upload');
 
 const router = express.Router()
 
 router.post("/register", validateData(registerSchema), ctrl.register);
+router.get("/verify/:verificationToken", ctrl.verifyEmail);
+router.post("/verify", validateData(emailSchema), ctrl.resendVerifyEmail);
 router.post("/login", validateData(registerSchema), ctrl.login);
 router.get("/current", authenticate, ctrl.getCurrent);
 router.post("/logout", authenticate, ctrl.logout);
